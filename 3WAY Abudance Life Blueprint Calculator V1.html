@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abundant Life Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- dom-to-image for capturing DOM as image -->
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .container {
+            max-width: 960px; /* Increased max-width for better layout */
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px; /* More rounded */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Stronger shadow */
+        }
+        .section-title {
+            color: #334155; /* Slate 700 */
+        }
+        .input-group label {
+            color: #64748b; /* Slate 500 */
+        }
+        .input-field {
+            border-color: #cbd5e1; /* Slate 300 */
+            border-width: 1px;
+            border-radius: 8px; /* Slightly rounded */
+            padding: 10px 14px;
+            font-size: 1rem;
+            color: #1e293b; /* Slate 900 */
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue 500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Focus ring */
+        }
+        .calculate-button {
+            background: linear-gradient(to right, #6366f1, #3b82f6); /* Gradient background */
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+        .result-box {
+            background-color: #e0f2fe; /* Light blue background */
+            border: 1px solid #93c5fd; /* Blue 300 border */
+            border-radius: 12px;
+            color: #1e40af; /* Blue 800 */
+        }
+        .currency-symbol {
+            font-size: 1.25rem; /* Large symbol */
+            font-weight: 700;
+            color: #1d4ed8; /* Blue 700 */
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #bfdbfe; /* Light blue dashed line */
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        /* Gradient for main title */
+        .gradient-text {
+            background-image: linear-gradient(to right, #3b82f6, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-6 bg-white rounded-xl shadow-lg my-8 md:my-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-center mb-4 gradient-text">Abundant Life Blueprint</h1>
+        <p class="text-base text-center text-gray-600 mb-10">
+            Your financial roadmap to a life you love. Fill in the amounts below to calculate the estimated annual cost.
+        </p>
+
+        <!-- User Information & Currency Settings -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">Profile</h2>
+                <div class="input-group mb-4">
+                    <label for="userName" class="block text-sm font-medium mb-1">Your Name</label>
+                    <input type="text" id="userName" value="" class="input-field w-full" placeholder="e.g., John Doe">
+                </div>
+            </div>
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">Currency Settings</h2>
+                <div class="input-group">
+                    <label for="currencySymbol" class="block text-sm font-medium mb-1">Select Your Currency</label>
+                    <select id="currencySymbol" class="input-field w-full">
+                        <option value="S$">Singapore Dollar (S$)</option>
+                        <option value="RM">Malaysian Ringgit (RM)</option>
+                        <option value="¥">Chinese Yuan (¥)</option>
+                        <option value="$">US Dollar ($)</option>
+                        <option value="฿">Thai Baht (฿)</option>
+                        <option value="₱">Philippine Peso (₱)</option>
+                        <option value="Rp">Indonesian Rupiah (Rp)</option>
+                        <option value="₫">Vietnamese Dong (₫)</option>
+                        <option value="£">Pound Sterling (£)</option>
+                        <option value="€">Euro (€)</option>
+                        <option value="₹">Indian Rupee (₹)</option>
+                        <option value="A$">Australian Dollar (A$)</option>
+                        <option value="C$">Canadian Dollar (C$)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifestyle Categories Form -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- 1. Housing & Living -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">1. Housing & Living</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="rentMortgage" class="block text-sm font-medium mb-1">Monthly Rent/Mortgage</label>
+                        <input type="number" id="rentMortgage" value="" class="input-field w-full" placeholder="e.g., 1500">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualRenovationSetup" class="block text-sm font-medium mb-1">Annual Renovation & Setup (if applicable)</label>
+                        <input type="number" id="annualRenovationSetup" value="" class="input-field w-full" placeholder="e.g., 500">
+                    </div>
+                    <div class="input-group">
+                        <label for="homeMaintenance" class="block text-sm font-medium mb-1">Annual Home Maintenance/Repairs</label>
+                        <input type="number" id="homeMaintenance" value="" class="input-field w-full" placeholder="e.g., 500">
+                    </div>
+                    <div class="input-group">
+                        <label for="utilities" class="block text-sm font-medium mb-1">Monthly Utilities (Water, Electricity, Gas, Internet)</label>
+                        <input type="number" id="utilities" value="" class="input-field w-full" placeholder="e.g., 250">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Daily Living Expenses -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">2. Daily Living Expenses</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="groceries" class="block text-sm font-medium mb-1">Monthly Groceries</label>
+                        <input type="number" id="groceries" value="" class="input-field w-full" placeholder="e.g., 600">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyHouseholdSpending" class="block text-sm font-medium mb-1">Monthly Household Spending</label>
+                        <input type="number" id="monthlyHouseholdSpending" value="" class="input-field w-full" placeholder="e.g., 100">
+                    </div>
+                    <div class="input-group">
+                        <label for="diningEntertainment" class="block text-sm font-medium mb-1">Monthly Dining Out & Entertainment</label>
+                        <input type="number" id="diningEntertainment" value="" class="input-field w-full" placeholder="e.g., 400">
+                    </div>
+                    <div class="input-group">
+                        <label for="healthcare" class="block text-sm font-medium mb-1">Monthly Personal Healthcare (Out-of-pocket)</label>
+                        <input type="number" id="healthcare" value="" class="input-field w-full" placeholder="e.g., 100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Transportation -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">3. Transportation</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="monthlyCarLoanPurchase" class="block text-sm font-medium mb-1">Monthly Car (Loan/Purchase)</label>
+                        <input type="number" id="monthlyCarLoanPurchase" value="" class="input-field w-full" placeholder="e.g., 400">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyFuelMaintenance" class="block text-sm font-medium mb-1">Monthly Fuel & Maintenance</label>
+                        <input type="number" id="monthlyFuelMaintenance" value="" class="input-field w-full" placeholder="e.g., 200">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyPublicTransportGrab" class="block text-sm font-medium mb-1">Monthly Public Transport/Grab</label>
+                        <input type="number" id="monthlyPublicTransportGrab" value="" class="input-field w-full" placeholder="e.g., 100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Protection -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">4. Protection</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="annualInsuranceSelf" class="block text-sm font-medium mb-1">Annual Insurance (Self)</label>
+                        <input type="number" id="annualInsuranceSelf" value="" class="input-field w-full" placeholder="e.g., 800">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualFamilyInsurance" class="block text-sm font-medium mb-1">Annual Family Insurance (Parents/Kids)</label>
+                        <input type="number" id="annualFamilyInsurance" value="" class="input-field w-full" placeholder="e.g., 1200">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyEmergencyFundProtection" class="block text-sm font-medium mb-1">Monthly Emergency Fund Contribution</label>
+                        <input type="number" id="monthlyEmergencyFundProtection" value="" class="input-field w-full" placeholder="e.g., 200">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Parents -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">5. Parents</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="monthlyParentsSupport" class="block text-sm font-medium mb-1">Monthly Support</label>
+                        <input type="number" id="monthlyParentsSupport" value="" class="input-field w-full" placeholder="e.g., 300">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualParentsHealthcareRetirement" class="block text-sm font-medium mb-1">Annual Healthcare / Retirement Contributions</label>
+                        <input type="number" id="annualParentsHealthcareRetirement" value="" class="input-field w-full" placeholder="e.g., 500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Children/Pets -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">6. Children/Pets</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="monthlyEducationFeesChildcare" class="block text-sm font-medium mb-1">Monthly Education Fees / Childcare</label>
+                        <input type="number" id="monthlyEducationFeesChildcare" value="" class="input-field w-full" placeholder="e.g., 500">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyActivitiesLivingExpenses" class="block text-sm font-medium mb-1">Activities / Living Expenses</label>
+                        <input type="number" id="monthlyActivitiesLivingExpenses" value="" class="input-field w-full" placeholder="e.g., 300">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyPetExpenses" class="block text-sm font-medium mb-1">Monthly Pet Expenses</label>
+                        <input type="number" id="monthlyPetExpenses" value="" class="input-field w-full" placeholder="e.g., 50">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Lifestyle -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">7. Lifestyle</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="annualTravelHolidays" class="block text-sm font-medium mb-1">Annual Travel & Holidays</label>
+                        <input type="number" id="annualTravelHolidays" value="" class="input-field w-full" placeholder="e.g., 3000">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyHobbiesWellness" class="block text-sm font-medium mb-1">Monthly Hobbies & Wellness</label>
+                        <input type="number" id="monthlyHobbiesWellness" value="" class="input-field w-full" placeholder="e.g., 200">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyFashionAccessories" class="block text-sm font-medium mb-1">Monthly Fashion & Accessories</label>
+                        <input type="number" id="monthlyFashionAccessories" value="" class="input-field w-full" placeholder="e.g., 150">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyPersonalCareSelfLove" class="block text-sm font-medium mb-1">Monthly Personal Care & Self-Love Expenses</label>
+                        <input type="number" id="monthlyPersonalCareSelfLove" value="" class="input-field w-full" placeholder="e.g., 100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Dream & Goals -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">8. Dream & Goals</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="monthlyPersonalRetirementSaving" class="block text-sm font-medium mb-1">Monthly Personal Saving + Retirement Saving</label>
+                        <input type="number" id="monthlyPersonalRetirementSaving" value="" class="input-field w-full" placeholder="e.g., 500">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyInvestmentGoals" class="block text-sm font-medium mb-1">Monthly Other Investment Goals (e.g., Financial, Business / Property)</label>
+                        <input type="number" id="monthlyInvestmentGoals" value="" class="input-field w-full" placeholder="e.g., 300">
+                    </div>
+                       <div class="input-group">
+                        <label for="annualPersonalDevelopment" class="block text-sm font-medium mb-1">Annual Personal Development & Courses</label>
+                        <input type="number" id="annualPersonalDevelopment" value="" class="input-field w-full" placeholder="e.g., 1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualDreamFund" class="block text-sm font-medium mb-1">Annual Dream Fund (e.g., specific big goal)</label>
+                        <input type="number" id="annualDreamFund" value="" class="input-field w-full" placeholder="e.g., 1000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Debt Repayment -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">9. Debt Repayment</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="monthlyPersonalLoans" class="block text-sm font-medium mb-1">Monthly Personal Loans</label>
+                        <input type="number" id="monthlyPersonalLoans" value="" class="input-field w-full" placeholder="e.g., 200">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyCreditCardDebt" class="block text-sm font-medium mb-1">Monthly Credit Card Debt Repayment</label>
+                        <input type="number" id="monthlyCreditCardDebt" value="" class="input-field w-full" placeholder="e.g., 150">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyStudentLoans" class="block text-sm font-medium mb-1">Monthly Student Loans</label>
+                        <input type="number" id="monthlyStudentLoans" value="" class="input-field w-full" placeholder="e.g., 250">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. Giving & Miscellaneous (Combined Section) -->
+            <div class="card p-6 border border-gray-200">
+                <h2 class="text-2xl font-semibold section-title mb-5">10. Giving & Miscellaneous</h2>
+                <div class="space-y-4">
+                    <div class="input-group">
+                        <label for="annualDonationsTithes" class="block text-sm font-medium mb-1">Annual Donations / Tithes</label>
+                        <input type="number" id="annualDonationsTithes" value="" class="input-field w-full" placeholder="e.g., 200">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualGiftsLovedOnes" class="block text-sm font-medium mb-1">Annual Gifts for Loved Ones</label>
+                        <input type="number" id="annualGiftsLovedOnes" value="" class="input-field w-full" placeholder="e.g., 300">
+                    </div>
+                    <div class="input-group">
+                        <label for="annualLuxuriesBigPurchases" class="block text-sm font-medium mb-1">Annual Luxuries & Big Purchases</label>
+                        <input type="number" id="luxuriesBigPurchases" value="" class="input-field w-full" placeholder="e.g., 2000">
+                    </div>
+                    <div class="input-group">
+                        <label for="monthlyMiscellaneous" class="block text-sm font-medium mb-1">Monthly General Miscellaneous / Buffer</label>
+                        <input type="number" id="miscellaneous" value="" class="input-field w-full" placeholder="e.g., 100">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Current Monthly Income Input -->
+        <div class="card p-6 border border-gray-200 mt-8">
+            <h2 class="text-2xl font-semibold section-title mb-5">Your Income</h2>
+            <div class="input-group">
+                <label for="currentMonthlyIncome" class="block text-sm font-medium mb-1">Current Monthly Income</label>
+                <input type="number" id="currentMonthlyIncome" value="" class="input-field w-full" placeholder="e.g., 5000">
+            </div>
+        </div>
+
+        <div class="text-center mt-10 space-x-4">
+            <button id="calculateButton" class="calculate-button inline-flex items-center justify-center">
+                Calculate My Annual Lifestyle Cost
+            </button>
+        </div>
+
+        <!-- Result Display -->
+        <div id="result" class="mt-12 p-8 result-box hidden">
+            <h2 class="text-3xl font-bold text-center mb-4 text-blue-800">Your Estimated Annual Lifestyle Cost:</h2>
+            <p class="text-6xl font-extrabold text-center text-blue-900 flex items-center justify-center">
+                <span class="currency-symbol mr-3" id="mainCurrencySymbol"></span><span id="totalAnnualCost">0.00</span>
+            </p>
+
+            <h3 class="text-2xl font-semibold text-blue-700 mt-8 mb-4 text-center" id="summaryHeader">Summary:</h3>
+            <div id="pdfContentArea" class="p-4 bg-blue-50 rounded-lg">
+                <div class="summary-item font-semibold text-lg text-blue-800">
+                    <span>Current Annual Income:</span>
+                    <span id="annualIncomeSummary"></span>
+                </div>
+                <div class="summary-item font-semibold text-lg text-blue-800 mb-4">
+                    <span>Total Annual Lifestyle Cost:</span>
+                    <span id="totalAnnualCostSummary"></span>
+                </div>
+
+                <h4 class="text-xl font-medium text-blue-700 mt-6 mb-3">Cost Breakdown by Category:</h4>
+                <div id="costBreakdownList" class="space-y-1">
+                    <!-- Breakdown items will be inserted here by JavaScript -->
+                </div>
+
+                <div class="summary-item font-bold text-xl text-blue-900 mt-6 pt-4 border-t-2 border-blue-300">
+                    <span>Annual Difference (Income - Cost):</span>
+                    <span id="annualDifferenceSummary" class="text-green-700"></span>
+                </div>
+                <div class="summary-item font-bold text-xl text-blue-900 pt-4 border-t-2 border-blue-300 mt-4">
+                    <span>Recommended Monthly Income:</span>
+                    <span id="recommendedMonthlyIncomeSummary" class="text-purple-700"></span>
+                </div>
+            </div>
+
+            <p class="text-center text-blue-700 mt-4 text-lg" id="disclaimerText">
+                Important: This blueprint provides an estimated financial roadmap, not professional financial advice. We encourage you to regularly review and adapt these figures as your life unfolds.
+            </p>
+            <div class="text-center mt-8 space-x-4">
+                <button id="downloadPngButton" class="calculate-button inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700">
+                    Download Summary as PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded. Initializing calculator.');
+            
+            // Assign elements to variables
+            const calculateButton = document.getElementById('calculateButton');
+            const resultDiv = document.getElementById('result');
+            const totalAnnualCostSpan = document.getElementById('totalAnnualCost');
+            const annualIncomeSummarySpan = document.getElementById('annualIncomeSummary');
+            const totalAnnualCostSummarySpan = document.getElementById('totalAnnualCostSummary');
+            const costBreakdownList = document.getElementById('costBreakdownList');
+            const annualDifferenceSummarySpan = document.getElementById('annualDifferenceSummary');
+            const recommendedMonthlyIncomeSummarySpan = document.getElementById('recommendedMonthlyIncomeSummary');
+            const currencySymbolSelect = document.getElementById('currencySymbol');
+            const mainCurrencySymbolSpan = document.getElementById('mainCurrencySymbol');
+            const userNameInput = document.getElementById('userName');
+            const summaryHeader = document.getElementById('summaryHeader');
+            const downloadPngButton = document.getElementById('downloadPngButton');
+
+
+            if (calculateButton) {
+                calculateButton.addEventListener('click', calculateLifestyleCost);
+                console.log('Calculate button event listener attached.');
+            } else {
+                console.error('Calculate button not found in the DOM!');
+            }
+
+            if (downloadPngButton) {
+                downloadPngButton.addEventListener('click', () => downloadReport('png'));
+                console.log('Download PNG button event listener attached.');
+            } else {
+                console.error('Download PNG button not found in the DOM!');
+            }
+
+            function calculateLifestyleCost() {
+                console.log('Calculate button clicked. Calculating lifestyle cost...');
+
+                // Get user name and currency symbol
+                const userName = userNameInput.value.trim() || 'Guest';
+                const currentCurrencySymbol = currencySymbolSelect.value;
+
+                // Update summary header with user's name
+                summaryHeader.textContent = `${userName}'s Lifestyle Summary:`;
+
+                // Helper function to get value from an input field, defaulting to 0 if empty
+                const getValue = (id) => {
+                    const inputElement = document.getElementById(id);
+                    return parseFloat(inputElement.value) || 0;
+                };
+
+                // Income
+                const currentMonthlyIncome = getValue('currentMonthlyIncome');
+                const annualIncome = currentMonthlyIncome * 12;
+
+                // 1. Housing & Living
+                const monthlyRentMortgage = getValue('rentMortgage');
+                const annualRenovationSetup = getValue('annualRenovationSetup');
+                const annualHomeMaintenance = getValue('homeMaintenance');
+                const monthlyUtilities = getValue('utilities');
+                const housingAnnualCost = (monthlyRentMortgage * 12) + annualRenovationSetup + annualHomeMaintenance + (monthlyUtilities * 12);
+
+                // 2. Daily Living Expenses
+                const monthlyGroceries = getValue('groceries');
+                const monthlyHouseholdSpending = getValue('monthlyHouseholdSpending');
+                const monthlyDiningEntertainment = getValue('diningEntertainment');
+                const monthlyPersonalHealthcare = getValue('healthcare');
+                const dailyLivingAnnualCost = (monthlyGroceries * 12) + (monthlyHouseholdSpending * 12) + (monthlyDiningEntertainment * 12) + (monthlyPersonalHealthcare * 12);
+
+                // 3. Transportation
+                const monthlyCarLoanPurchase = getValue('monthlyCarLoanPurchase');
+                const monthlyFuelMaintenance = getValue('monthlyFuelMaintenance');
+                const monthlyPublicTransportGrab = getValue('monthlyPublicTransportGrab');
+                const transportationAnnualCost = (monthlyCarLoanPurchase * 12) + (monthlyFuelMaintenance * 12) + (monthlyPublicTransportGrab * 12);
+
+                // 4. Protection
+                const annualInsuranceSelf = getValue('annualInsuranceSelf');
+                const annualFamilyInsurance = getValue('annualFamilyInsurance');
+                const monthlyEmergencyFundProtection = getValue('monthlyEmergencyFundProtection');
+                const protectionAnnualCost = annualInsuranceSelf + annualFamilyInsurance + (monthlyEmergencyFundProtection * 12);
+
+                // 5. Parents
+                const monthlyParentsSupport = getValue('monthlyParentsSupport');
+                const annualParentsHealthcareRetirement = getValue('annualParentsHealthcareRetirement');
+                const parentsAnnualCost = (monthlyParentsSupport * 12) + annualParentsHealthcareRetirement;
+
+                // 6. Children/Pets
+                const monthlyEducationFeesChildcare = getValue('monthlyEducationFeesChildcare');
+                const monthlyActivitiesLivingExpenses = getValue('monthlyActivitiesLivingExpenses');
+                const monthlyPetExpenses = getValue('monthlyPetExpenses');
+                const childrenPetsAnnualCost = (monthlyEducationFeesChildcare * 12) + (monthlyActivitiesLivingExpenses * 12) + (monthlyPetExpenses * 12);
+
+                // 7. Lifestyle
+                const annualTravelHolidays = getValue('annualTravelHolidays');
+                const monthlyHobbiesWellness = getValue('monthlyHobbiesWellness');
+                const monthlyFashionAccessories = getValue('monthlyFashionAccessories');
+                const monthlyPersonalCareSelfLove = getValue('monthlyPersonalCareSelfLove');
+                const lifestyleAnnualCost = annualTravelHolidays + (monthlyHobbiesWellness * 12) + (monthlyFashionAccessories * 12) + (monthlyPersonalCareSelfLove * 12);
+
+                // 8. Dream & Goals
+                const monthlyPersonalRetirementSaving = getValue('monthlyPersonalRetirementSaving');
+                const monthlyInvestmentGoals = getValue('monthlyInvestmentGoals');
+                const annualPersonalDevelopment = getValue('annualPersonalDevelopment');
+                const annualDreamFund = getValue('annualDreamFund');
+                const dreamGoalsAnnualCost = (monthlyPersonalRetirementSaving * 12) + (monthlyInvestmentGoals * 12) + annualPersonalDevelopment + annualDreamFund;
+
+                // 9. Debt Repayment
+                const monthlyPersonalLoans = getValue('monthlyPersonalLoans');
+                const monthlyCreditCardDebt = getValue('monthlyCreditCardDebt');
+                const monthlyStudentLoans = getValue('monthlyStudentLoans');
+                const debtRepaymentAnnualCost = (monthlyPersonalLoans * 12) + (monthlyCreditCardDebt * 12) + (monthlyStudentLoans * 12);
+
+                // 10. Giving & Miscellaneous (COMBINED)
+                const annualDonationsTithes = getValue('annualDonationsTithes');
+                const annualGiftsLovedOnes = getValue('annualGiftsLovedOnes');
+                const annualLuxuriesBigPurchases = getValue('luxuriesBigPurchases');
+                const monthlyMiscellaneous = getValue('miscellaneous');
+                const givingMiscellaneousAnnualCost = annualDonationsTithes + annualGiftsLovedOnes + annualLuxuriesBigPurchases + (monthlyMiscellaneous * 12);
+
+                const totalAnnualCost = housingAnnualCost + dailyLivingAnnualCost + transportationAnnualCost + protectionAnnualCost + parentsAnnualCost + childrenPetsAnnualCost + lifestyleAnnualCost + dreamGoalsAnnualCost + debtRepaymentAnnualCost + givingMiscellaneousAnnualCost;
+
+                const annualDifference = annualIncome - totalAnnualCost;
+                const recommendedMonthlyIncome = totalAnnualCost / 12;
+
+                // Format currency function now takes the symbol
+                const formatCurrency = (amount, symbol) => {
+                    return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                };
+
+                // Update the main currency symbol displayed next to total annual cost
+                mainCurrencySymbolSpan.textContent = currentCurrencySymbol;
+
+                // Display the main total
+                totalAnnualCostSpan.textContent = formatCurrency(totalAnnualCost, currentCurrencySymbol);
+
+                // Update summary section
+                annualIncomeSummarySpan.textContent = formatCurrency(annualIncome, currentCurrencySymbol);
+                totalAnnualCostSummarySpan.textContent = formatCurrency(totalAnnualCost, currentCurrencySymbol);
+
+                // Clear previous breakdown
+                costBreakdownList.innerHTML = '';
+
+                // Create and append breakdown items
+                const breakdownItems = [
+                    { name: 'Housing & Living', cost: housingAnnualCost },
+                    { name: 'Daily Living Expenses', cost: dailyLivingAnnualCost },
+                    { name: 'Transportation', cost: transportationAnnualCost },
+                    { name: 'Protection', cost: protectionAnnualCost },
+                    { name: 'Parents', cost: parentsAnnualCost },
+                    { name: 'Children/Pets', cost: childrenPetsAnnualCost },
+                    { name: 'Lifestyle', cost: lifestyleAnnualCost },
+                    { name: 'Dream & Goals', cost: dreamGoalsAnnualCost },
+                    { name: 'Debt Repayment', cost: debtRepaymentAnnualCost },
+                    { name: 'Giving & Miscellaneous', cost: givingMiscellaneousAnnualCost },
+                ];
+
+                breakdownItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('summary-item', 'text-gray-700', 'text-base');
+                    div.innerHTML = `<span>${item.name}:</span><span>${formatCurrency(item.cost, currentCurrencySymbol)}</span>`;
+                    costBreakdownList.appendChild(div);
+                });
+
+                // Display annual difference
+                annualDifferenceSummarySpan.textContent = formatCurrency(annualDifference, currentCurrencySymbol);
+                if (annualDifference < 0) {
+                    annualDifferenceSummarySpan.classList.remove('text-green-700');
+                    annualDifferenceSummarySpan.classList.add('text-red-700');
+                } else {
+                    annualDifferenceSummarySpan.classList.remove('text-red-700');
+                    annualDifferenceSummarySpan.classList.add('text-green-700');
+                }
+
+                // Display recommended monthly income
+                recommendedMonthlyIncomeSummarySpan.textContent = formatCurrency(recommendedMonthlyIncome, currentCurrencySymbol);
+
+                resultDiv.classList.remove('hidden');
+                resultDiv.scrollIntoView({ behavior: 'smooth' }); // Scroll to the result
+                console.log('Calculation complete. Total Annual Cost:', totalAnnualCost);
+            }
+
+            // Centralized error message box function - kept for other potential errors, but not used for success messages now
+            function showMessageBox(message) {
+                const messageBox = document.createElement('div');
+                messageBox.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    z-index: 1000;
+                    text-align: center;
+                `;
+                messageBox.innerHTML = `
+                    <p>${message}</p>
+                    <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background-color: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                `;
+                document.body.appendChild(messageBox);
+            }
+
+            // Function to download the summary as PNG
+            async function downloadReport(type) {
+                // Ensure values are calculated and displayed before capturing
+                calculateLifestyleCost();
+
+                const userName = userNameInput.value.trim() || 'Guest';
+                const sourceElement = document.getElementById('result');
+                
+                // Temporarily adjust styles for better capture if needed (e.g., ensure background)
+                const originalDisplay = sourceElement.style.display;
+                const originalOpacity = sourceElement.style.opacity;
+                const originalZIndex = sourceElement.style.zIndex;
+
+                // Show the element if hidden, but keep it off-screen to prevent flickering
+                sourceElement.style.display = 'block';
+                sourceElement.style.opacity = '1'; // Ensure it's fully opaque
+                sourceElement.style.zIndex = '9999'; // Bring to front just in case
+                
+                // dom-to-image needs the element to be in the visible flow to calculate dimensions correctly
+                // A workaround for off-screen elements: temporarily attach to a temporary div in the document
+                const tempDiv = document.createElement('div');
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                tempDiv.style.top = '-9999px';
+                tempDiv.style.backgroundColor = 'white'; // Ensure white background for capture
+                tempDiv.appendChild(sourceElement.cloneNode(true)); // Clone the result element with all its styles
+                document.body.appendChild(tempDiv);
+
+                // Remove the buttons from the cloned element for capture 
+                const clonedDownloadPngButton = tempDiv.querySelector('#downloadPngButton');
+                if (clonedDownloadPngButton) clonedDownloadPngButton.remove();
+
+
+                try {
+                    const dataUrl = await domtoimage.toPng(tempDiv.firstChild, {
+                        bgcolor: '#ffffff' // Ensure white background for the image
+                    });
+
+                    if (type === 'png') {
+                        const link = document.createElement('a');
+                        link.download = `${userName}_AbundantLifeBlueprint_Report.png`;
+                        link.href = dataUrl;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        // showMessageBox('Summary downloaded as PNG!'); // Removed as per request
+                    }
+                } catch (error) {
+                    console.error("Error generating report:", error);
+                    showMessageBox(`Failed to generate ${type.toUpperCase()}. Error: ${error.message}`);
+                } finally {
+                    // Clean up the temporary div and its cloned content
+                    if (tempDiv && tempDiv.parentNode) {
+                        tempDiv.parentNode.removeChild(tempDiv);
+                    }
+                    // Restore original styles
+                    sourceElement.style.display = originalDisplay;
+                    sourceElement.style.opacity = originalOpacity;
+                    sourceElement.style.zIndex = originalZIndex;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
